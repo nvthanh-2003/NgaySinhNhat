@@ -1,0 +1,91 @@
+/* Thiết lập nền và căn giữa */
+body {
+    font-family: 'Inter', sans-serif;
+    background: linear-gradient(135deg, #fee2e2 0%, #fecaca 100%); /* Hồng nhạt, ấm áp */
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 100vh;
+    margin: 0;
+    overflow: hidden; /* Ngăn cuộn trang */
+    color: #4a4a4a;
+}
+#greetingCard {
+    background-color: #ffffff;
+    border-radius: 24px; /* Góc bo tròn hơn */
+    box-shadow: 0 15px 40px rgba(0, 0, 0, 0.2);
+    padding: 3rem 2rem;
+    max-width: 450px;
+    width: 90%;
+    text-align: center;
+    position: relative;
+    z-index: 10;
+}
+#title {
+    color: #e90064; /* Màu hồng đậm */
+    font-weight: 900;
+    font-size: 2.25rem;
+    margin-bottom: 2.5rem;
+    text-shadow: 1px 1px 3px rgba(255, 192, 203, 0.5);
+}
+
+/* Ẩn/Hiện message và video */
+#message {
+    opacity: 0;
+    transform: translateY(20px);
+    transition: opacity 1.5s ease-in-out, transform 1s ease-out;
+    text-align: left;
+}
+#message.visible {
+    opacity: 1;
+    transform: translateY(0);
+}
+#videoContainer {
+    transition: opacity 0.5s ease-in-out;
+}
+.hidden-element {
+    display: none;
+}
+
+#personImage {
+    width: 120px;
+    height: 120px;
+    object-fit: cover;
+    border-radius: 50%;
+    border: 4px solid #fbcfe8;
+    margin: 0 auto 1.5rem;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+    display: block;
+}
+.signature {
+    margin-top: 1.5rem;
+    font-style: italic;
+    font-weight: 600;
+    color: #e90064;
+    text-align: right;
+}
+.emoji-section {
+    margin: 2rem 0;
+    font-size: 2rem;
+    display: flex;
+    justify-content: space-around;
+}
+#showButton {
+    transition: all 0.3s ease;
+    transform: scale(1);
+}
+#showButton:hover {
+    transform: scale(1.05);
+    box-shadow: 0 5px 15px rgba(233, 0, 100, 0.4);
+}
+
+/* Vị trí Canvas Confetti */
+#confetti {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    pointer-events: none;
+    z-index: 5;
+}

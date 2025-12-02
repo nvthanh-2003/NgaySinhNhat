@@ -1,0 +1,315 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Chúc Mừng Sinh Nhật Người Tôi Yêu! 🎂</title>
+    <!-- Tải Tailwind CSS để tạo giao diện hiện đại -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        /* Thiết lập nền và căn giữa */
+        body {
+            font-family: 'Inter', sans-serif;
+            background: linear-gradient(135deg, #fee2e2 0%, #fecaca 100%); /* Hồng nhạt, ấm áp */
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            margin: 0;
+            /* Đặt overflow: auto; để đảm bảo nội dung không bị cắt nếu quá lớn,
+               nhưng tôi vẫn giữ hidden để duy trì hiệu ứng pháo hoa toàn màn hình */
+            overflow: hidden;
+            color: #4a4a4a;
+        }
+        #greetingCard {
+            background-color: #ffffff;
+            border-radius: 24px; /* Góc bo tròn hơn */
+            box-shadow: 0 15px 40px rgba(0, 0, 0, 0.2);
+            padding: 3rem 2rem;
+            max-width: 450px; /* Giới hạn kích thước thiệp */
+            width: 90%;
+            text-align: center;
+            position: relative;
+            z-index: 10;
+        }
+        #title {
+            color: #e90064; /* Màu hồng đậm */
+            font-weight: 900;
+            font-size: 2.25rem;
+            margin-bottom: 2.5rem;
+            text-shadow: 1px 1px 3px rgba(255, 192, 203, 0.5);
+        }
+
+        /* Thêm CSS này để đảm bảo video luôn nằm trong giới hạn của #greetingCard */
+        #videoContainer video {
+            width: 100%;
+            height: auto;
+            display: block;
+            max-width: 100%;
+        }
+
+        /* Ẩn/Hiện message và video */
+        #message {
+            opacity: 0;
+            transform: translateY(20px);
+            transition: opacity 1.5s ease-in-out, transform 1s ease-out;
+            text-align: left;
+        }
+        #message.visible {
+            opacity: 1;
+            transform: translateY(0);
+        }
+        #videoContainer {
+            transition: opacity 0.5s ease-in-out;
+        }
+        .hidden-element {
+            display: none;
+        }
+
+        #personImage {
+            width: 120px;
+            height: 120px;
+            object-fit: cover;
+            border-radius: 50%;
+            border: 4px solid #fbcfe8;
+            margin: 0 auto 1.5rem;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+            display: block;
+        }
+        .signature {
+            margin-top: 1.5rem;
+            font-style: italic;
+            font-weight: 600;
+            color: #e90064;
+            text-align: right;
+        }
+        .emoji-section {
+            margin: 2rem 0;
+            font-size: 2rem;
+            display: flex;
+            justify-content: space-around;
+        }
+        #showButton {
+            transition: all 0.3s ease;
+            transform: scale(1);
+        }
+        #showButton:hover {
+            transform: scale(1.05);
+            box-shadow: 0 5px 15px rgba(233, 0, 100, 0.4);
+        }
+
+        /* Vị trí Canvas Confetti */
+        #confetti {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: 5;
+        }
+    </style>
+</head>
+<body>
+
+<div id="greetingCard" class="shadow-xl">
+    <h1 id="title">Chúc mừng sinh nhật em!</h1>
+
+    <!-- 1. CONTAINER VIDEO (Ẩn ban đầu) -->
+    <div id="videoContainer" class="hidden-element rounded-xl overflow-hidden mb-4">
+        <!-- Đã loại bỏ width="100%" height="auto" ở đây và thay thế bằng CSS để kiểm soát tốt hơn -->
+        <video id="birthdayVideo" controls>
+            <!-- IMPORTANT: Thay thế liên kết này bằng URL video công khai của bạn -->
+            <source src="(14)%20Học%20Tiếng%20Anh%20Qua%20Những%20Đoạn%20Video%20Ngắn%20-%20Những%20Câu%20Nói%20Hay%20-%20%236%20%5BEnglish%20For%20Life%5D%20-%20YouTube.mp4" type="video/mp4">
+            Trình duyệt của bạn không hỗ trợ thẻ video.
+        </video>
+    </div>
+
+
+    <!-- 2. NỘI DUNG THIỆP (Ẩn ban đầu) -->
+    <div id="message" class="hidden-element">
+        <img id="personImage" src="anh2.jpg" alt="Người tôi yêu" class="mx-auto">
+
+        <p class="mb-3">Gửi tới em,</p>
+        <p class="mb-3 leading-relaxed">Gửi lời chúc tốt đẹp nhất đến một người xinh đẹp và là người trân trọng nhất đối với anh! Chúc em sinh nhật thật ấm áp và hạnh phúc nhé. Chúc em tuổi mới luôn rạng rỡ, hạnh phúc, và đạt được mọi điều mình mong muốn. Tuy ở xa không đón sinh nhật được cùng nhưng vẫn mong những điều tuyệt vời được gửi đến với em</p>
+        <p class="signature">Ngày tuyệt vời nhất!</p>
+
+        <div class="emoji-section">
+            <span>💖</span>
+            <span>🎉</span>
+            <span>🎂</span>
+            <span id="giftEmoji">🎁</span>
+        </div>
+    </div>
+
+    <!-- 3. NÚT MỞ QUÀ -->
+    <button id="showButton" onclick="revealMessage()"
+            class="mt-6 px-8 py-3 bg-pink-500 text-white font-bold rounded-full shadow-lg hover:bg-pink-600 focus:outline-none focus:ring-4 focus:ring-pink-300 transition duration-300 ease-in-out">
+        Nhấp vào đây để mở quà
+    </button>
+</div>
+
+<canvas id="confetti"></canvas>
+
+<script>
+    // Định nghĩa các biến DOM
+    const message = document.getElementById('message');
+    const showButton = document.getElementById('showButton');
+    const videoContainer = document.getElementById('videoContainer');
+    const birthdayVideo = document.getElementById('birthdayVideo');
+
+    // Khởi tạo Canvas Confetti
+    const canvas = document.getElementById('confetti');
+    const ctx = canvas.getContext('2d');
+    let particles = [];
+    const colors = ['#f44336', '#e91e63', '#9c27b0', '#673ab7', '#3f51b5', '#2196f3', '#00bcd4', '#009688', '#4caf50', '#8bc34a', '#ffeb3b', '#ffc107', '#ff9800', '#ff5722'];
+
+    // Cấu hình Confetti và Animation (giữ nguyên từ phiên bản trước)
+    function resizeCanvas() {
+        canvas.width = window.innerWidth;
+        canvas.height = window.innerHeight;
+    }
+    window.addEventListener('resize', resizeCanvas);
+    resizeCanvas();
+
+    function ConfettiParticle() {
+        this.x = canvas.width / 2;
+        this.y = canvas.height / 2;
+        this.radius = Math.random() * 8 + 2;
+        this.color = colors[Math.floor(Math.random() * colors.length)];
+        this.tilt = Math.floor(Math.random() * 10) - 10;
+        this.tiltAngle = 0;
+        this.tiltAngleIncrement = Math.random() * 0.1 + 0.05;
+        this.velocity = {
+            x: (Math.random() - 0.5) * 15,
+            y: (Math.random() * -18) - 5
+        };
+        this.gravity = 0.5;
+        this.dampening = 0.9;
+    }
+
+    ConfettiParticle.prototype.update = function() {
+        this.velocity.y += this.gravity;
+        this.velocity.x *= this.dampening;
+        this.x += this.velocity.x;
+        this.y += this.velocity.y;
+        this.tiltAngle += this.tiltAngleIncrement;
+        this.tilt = Math.sin(this.tiltAngle) * 25;
+    };
+
+    ConfettiParticle.prototype.draw = function() {
+        ctx.beginPath();
+        ctx.lineWidth = this.radius * 2;
+        ctx.strokeStyle = this.color;
+        ctx.moveTo(this.x + this.tilt, this.y);
+        ctx.lineTo(this.x, this.y + this.tilt);
+        ctx.stroke();
+    };
+
+    function animateConfetti() {
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
+        particles = particles.filter(p => p.y < canvas.height);
+
+        for (let i = 0; i < particles.length; i++) {
+            particles[i].update();
+            particles[i].draw();
+        }
+
+        // Chỉ tiếp tục animation nếu còn hạt pháo hoa
+        if (particles.length > 0) {
+            requestAnimationFrame(animateConfetti);
+        }
+    }
+
+    function shootConfetti() {
+        const count = 75;
+        for (let i = 0; i < count; i++) {
+            particles.push(new ConfettiParticle());
+        }
+        animateConfetti();
+    }
+
+    // --- LOGIC CHO TƯƠNG TÁC THIỆP ---
+
+    // Hàm hiển thị thông điệp và pháo hoa
+    function showMessageAndConfetti() {
+        // Ẩn video và container
+        videoContainer.classList.add('hidden-element');
+
+        // Hiển thị thông điệp
+        message.classList.remove('hidden-element');
+        setTimeout(() => {
+            // Đợi một chút để transition hoạt động mượt mà
+            message.classList.add('visible');
+        }, 100);
+
+        // Kích hoạt pháo hoa
+        shootConfetti();
+    }
+
+    // Sự kiện khi video kết thúc
+    birthdayVideo.addEventListener('ended', () => {
+        showMessageAndConfetti();
+    });
+
+    // Sự kiện khi người dùng tắt video (bấm nút dừng hoặc thoát fullscreen)
+    birthdayVideo.addEventListener('pause', () => {
+        // Nếu video bị dừng và chưa kết thúc, hỏi người dùng có muốn bỏ qua không
+        if (birthdayVideo.currentTime > 0 && birthdayVideo.currentTime < birthdayVideo.duration && !message.classList.contains('visible')) {
+            // Thay thế cho alert()
+            // Sử dụng một modal tùy chỉnh thay vì window.confirm
+            const confirmSkip = window.confirm('Bạn có muốn bỏ qua video và xem thông điệp chúc mừng không?');
+            if (confirmSkip) {
+                // Tắt video và hiển thị thông điệp
+                birthdayVideo.pause();
+                birthdayVideo.currentTime = 0;
+                showMessageAndConfetti();
+            } else {
+                // Tiếp tục chơi video
+                birthdayVideo.play().catch(e => console.error("Could not resume play:", e));
+            }
+        }
+    });
+
+    // Hàm được gọi khi nhấn nút "Mở quà"
+    function revealMessage() {
+        // 1. Ẩn nút "Mở quà"
+        showButton.classList.add('hidden-element');
+
+        // 2. Hiện container video và phát video
+        videoContainer.classList.remove('hidden-element');
+
+        // Chơi video (nếu có nguồn hợp lệ)
+        if (birthdayVideo.src || birthdayVideo.querySelector('source') && birthdayVideo.querySelector('source').src) {
+            // Đảm bảo video bắt đầu từ đầu
+            birthdayVideo.currentTime = 0;
+
+            // Xử lý Autoplay
+            birthdayVideo.play().catch(error => {
+                console.warn("Autoplay bị chặn. Yêu cầu người dùng bấm Play.");
+                // Hiển thị thông báo nếu Autoplay bị chặn
+                const titleElement = document.getElementById('title');
+                titleElement.textContent = "Nhấn Play để xem món quà đầu tiên!";
+
+                // Thêm nút Play thủ công để người dùng tương tác
+                const manualPlayButton = document.createElement('button');
+                manualPlayButton.textContent = '▶️ Xem Video';
+                manualPlayButton.id = 'manualPlayButton';
+                manualPlayButton.className = 'mt-4 px-6 py-2 bg-red-500 text-white font-semibold rounded-lg hover:bg-red-600 transition duration-300';
+                manualPlayButton.onclick = () => {
+                    birthdayVideo.play().then(() => {
+                        manualPlayButton.remove();
+                        titleElement.textContent = "Chúc mừng sinh nhật em!";
+                    }).catch(e => console.error("Lỗi phát video:", e));
+                };
+                videoContainer.after(manualPlayButton);
+            });
+        }
+
+        // Chặn sự kiện click lặp lại
+        showButton.onclick = null;
+    }
+</script>
+
+</body>
+</html>
