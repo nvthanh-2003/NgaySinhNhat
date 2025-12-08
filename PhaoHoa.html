@@ -7,14 +7,13 @@
     <style>
         body {
             margin: 0;
-            overflow: hidden; /* Quan trọng để canvas chiếm toàn màn hình */
-            background-color: #000; /* Nền tối cho pháo hoa nổi bật */
+            overflow: hidden;
+            background-color: #000;
             color: white;
             font-family: 'Arial', sans-serif;
             text-align: center;
         }
 
-        /* Canvas sẽ là nơi vẽ pháo hoa */
         canvas {
             display: block;
         }
@@ -43,17 +42,76 @@
                 transform: translate(-50%, -50%) scale(1.05);
             }
         }
+
+        /* --- BỘ ĐẾM NGƯỢC --- */
+        #auto-redirect-timer {
+            position: absolute;
+            top: 20px;
+            left: 50%;
+            transform: translateX(-50%);
+            color: white;
+            font-size: 1.2em;
+            text-shadow: 1px 1px 3px rgba(0, 0, 0, 0.9);
+            z-index: 20; /* Nằm trên canvas */
+        }
+
+        /* Hiệu ứng cảnh báo khi sắp chuyển trang */
+        .blinking {
+            animation: blink 0.7s infinite alternate;
+            color: #FF4500; /* Màu đỏ cam */
+            font-weight: bold;
+        }
+
+        @keyframes blink {
+            from { opacity: 1; }
+            to { opacity: 0.4; }
+        }
     </style>
 </head>
 <body>
-<body>
+
 <div id="celebration-text">
     CHÚC MỪNG SINH NHẬT! 🎉
 </div>
 
+<div id="auto-redirect-timer">Trang sẽ chuyển trong: 30 giây</div>
+
 <canvas id="fireworksCanvas"></canvas>
 
 <script>
+    // --- CẤU HÌNH CHUYỂN TRANG ---
+    const TARGET_URL = "index.html"; // <-- THAY THẾ URL MỤC TIÊU CỦA BẠN VÀO ĐÂY
+    const DELAY_SECONDS = 30; // 30 giây
+
+    // --- LOGIC ĐẾM NGƯỢC VÀ CHUYỂN TRANG ---
+    const timerElement = document.getElementById('auto-redirect-timer');
+    let timeLeft = DELAY_SECONDS;
+
+    function updateTimer() {
+        if (timeLeft > 0) {
+            timerElement.textContent = `Trang sẽ chuyển trong: ${timeLeft} giây`;
+
+            // Thêm hiệu ứng nhấp nháy khi còn 5 giây cuối
+            if (timeLeft <= 5) {
+                timerElement.classList.add('blinking');
+            }
+
+            timeLeft--;
+        } else {
+            // Khi hết thời gian, thực hiện chuyển trang
+            timerElement.textContent = "Đang chuyển trang...";
+            clearInterval(timerInterval);
+            window.location.href = TARGET_URL;
+        }
+    }
+
+    // Thiết lập Interval để chạy hàm updateTimer mỗi giây
+    const timerInterval = setInterval(updateTimer, 1000);
+
+    // Gọi hàm lần đầu tiên để hiển thị ngay lập tức
+    updateTimer();
+
+    // --- LOGIC PHÁO HOA (GIỮ NGUYÊN) ---
     const canvas = document.getElementById('fireworksCanvas');
     const ctx = canvas.getContext('2d');
 
@@ -69,7 +127,6 @@
         canvas.height = H;
     });
 
-    // --- HÀM TẠO MÀU SẮC NGẪU NHIÊN ---
     function randomColor() {
         const r = Math.floor(Math.random() * 255);
         const g = Math.floor(Math.random() * 255);
@@ -77,7 +134,6 @@
         return `rgb(${r},${g},${b})`;
     }
 
-    // --- LỚP HẠT PHÁO HOA (Particle) ---
     class Particle {
         constructor(x, y, color, angle, speed) {
             this.x = x;
@@ -85,15 +141,14 @@
             this.color = color || randomColor();
             this.radius = Math.random() * 1.5 + 0.5;
 
-            // Tính toán vận tốc dựa trên góc và tốc độ
             this.velocity = {
                 x: Math.cos(angle) * speed,
                 y: Math.sin(angle) * speed
             };
 
-            this.alpha = 1; // Độ trong suốt ban đầu
-            this.friction = 0.98; // Giảm nhẹ lực cản
-            this.gravity = 0.02; // *** TRỌNG LỰC RẤT NHỎ, GẦN NHƯ KHÔNG TRỌNG LỰC ***
+            this.alpha = 1;
+            this.friction = 0.98;
+            this.gravity = 0.02;
         }
 
         draw() {
@@ -107,55 +162,42 @@
         }
 
         update() {
-            // Giảm vận tốc (lực cản không khí)
             this.velocity.x *= this.friction;
             this.velocity.y *= this.friction;
 
-            // Thêm trọng lực (rất ít)
             this.velocity.y += this.gravity;
 
-            // Cập nhật vị trí
             this.x += this.velocity.x;
             this.y += this.velocity.y;
 
-            // Giảm độ trong suốt (tàn rất chậm)
-            this.alpha -= 0.005; // *** GIẢM ĐỘ ALPHA RẤT CHẬM (0.005) ***
+            this.alpha -= 0.005;
         }
     }
 
     let particles = [];
 
-    // --- HÀM TẠO PHÁO HOA PHUN LÊN CAO ---
     function createHighFountain(x, y, color) {
         const particleCount = 80;
-        // *** TỐC ĐỘ BAN ĐẦU CAO HƠN ĐỂ PHUN LÊN CAO ***
         const baseSpeed = 5;
 
         for (let i = 0; i < particleCount; i++) {
-            // Góc phun: Tập trung quanh 270 độ (thẳng đứng) với một độ lệch nhỏ (tỏa rộng)
-            // Góc từ 240 độ đến 300 độ.
             const angleDeg = Math.random() * 60 + 240;
             const angleRad = (Math.PI / 180) * angleDeg;
 
-            // Vận tốc ngẫu nhiên dựa trên tốc độ cơ sở
             const speed = baseSpeed * (Math.random() * 0.5 + 0.75);
 
             particles.push(new Particle(x, y, color, angleRad, speed));
         }
     }
 
-    // --- VÒNG LẶP HOẠT HÌNH CHÍNH ---
     function animate() {
         requestAnimationFrame(animate);
 
-        // Xóa Canvas với độ trong suốt thấp (0.1)
         ctx.fillStyle = 'rgba(0, 0, 0, 0.1)';
         ctx.fillRect(0, 0, W, H);
 
-        // Lọc các hạt đã tàn
         particles = particles.filter(p => p.alpha > 0);
 
-        // Cập nhật và vẽ
         particles.forEach(p => {
             p.update();
             p.draw();
@@ -180,41 +222,6 @@
             createHighFountain(x, y);
         }, i * 250);
     }
-
-    // ... Phần code Pháo hoa giữ nguyên ...
-
-    // === CODE KHẮC PHỤC LỖI AUTOPLAY (Tối ưu) ===
-    document.addEventListener('DOMContentLoaded', () => {
-        const music = document.getElementById('backgroundMusic');
-        const audioMessage = document.getElementById('audio-message');
-
-        const playPromise = music.play();
-
-        if (playPromise !== undefined) {
-            playPromise.then(() => {
-                // Autoplay thành công
-            }).catch(error => {
-                // Autoplay bị chặn -> Hiển thị thông báo và lắng nghe tương tác
-                audioMessage.style.display = 'block';
-
-                const enableMusic = () => {
-                    music.play();
-                    audioMessage.style.display = 'none'; // Ẩn thông báo sau khi phát
-                    document.body.removeEventListener('click', enableMusic);
-                    document.body.removeEventListener('touchstart', enableMusic);
-                };
-
-                // Lắng nghe sự kiện click/touch đầu tiên trên body
-                document.body.addEventListener('click', enableMusic);
-                document.body.addEventListener('touchstart', enableMusic);
-            });
-        }
-    });
-    // =================================================================
-</script>
-
-</body>
-</html>
 </script>
 
 </body>

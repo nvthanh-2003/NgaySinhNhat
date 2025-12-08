@@ -36,6 +36,7 @@
             align-items: center;
             position: relative;
             transform: scale(0.8);
+            margin-top: 20px; /* Thêm khoảng cách với timer */
         }
 
         /* --- HIỆU ỨNG TẦNG BÁNH --- */
@@ -123,11 +124,34 @@
             box-shadow: 0 5px 10px rgba(0, 0, 0, 0.5);
             z-index: 8;
         }
+
+        /* --- BỘ ĐẾM NGƯỢC --- */
+        #auto-redirect-timer {
+            position: absolute;
+            top: 20px;
+            color: var(--icing-color);
+            font-size: 1.2em;
+            text-shadow: 1px 1px 3px rgba(0, 0, 0, 0.7);
+            z-index: 200;
+        }
+
+        /* Hiệu ứng cảnh báo khi sắp chuyển trang */
+        .blinking {
+            animation: blink 0.7s infinite alternate;
+            color: var(--flame-tip-color);
+        }
+
+        @keyframes blink {
+            from { opacity: 1; }
+            to { opacity: 0.3; }
+        }
     </style>
 </head>
 <body>
 
 <h1> Chúc Mừng Sinh Nhật Tuổi 22! 🎉</h1>
+
+<div id="auto-redirect-timer">Trang sẽ chuyển trong: 30 giây</div>
 
 <div class="cake-container">
 
@@ -159,6 +183,40 @@
     </div>
 
 </div>
+
+<script>
+    // --- CẤU HÌNH CHUYỂN TRANG ---
+    const TARGET_URL = "index.html"; // <-- THAY THẾ URL MỤC TIÊU CỦA BẠN VÀO ĐÂY
+    const DELAY_SECONDS = 30; // 30 giây theo yêu cầu
+
+    const timerElement = document.getElementById('auto-redirect-timer');
+    let timeLeft = DELAY_SECONDS;
+
+    // Hàm cập nhật bộ đếm và chuyển trang
+    function updateTimer() {
+        if (timeLeft > 0) {
+            timerElement.textContent = `Trang sẽ chuyển trong: ${timeLeft} giây`;
+
+            // Thêm hiệu ứng nhấp nháy khi còn 5 giây cuối
+            if (timeLeft <= 5) {
+                timerElement.classList.add('blinking');
+            }
+
+            timeLeft--;
+        } else {
+            // Khi hết thời gian, thực hiện chuyển trang
+            timerElement.textContent = "Đang chuyển trang...";
+            clearInterval(timerInterval);
+            window.location.href = TARGET_URL;
+        }
+    }
+
+    // Thiết lập Interval để chạy hàm updateTimer mỗi giây (1000ms)
+    const timerInterval = setInterval(updateTimer, 1000);
+
+    // Gọi hàm lần đầu tiên để hiển thị ngay lập tức
+    updateTimer();
+</script>
 
 </body>
 </html>

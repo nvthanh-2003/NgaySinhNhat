@@ -9,17 +9,39 @@
             margin: 0;
             overflow: hidden; /* Ẩn thanh cuộn */
             background-color: #000000; /* Nền tối */
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
         }
         canvas {
             display: block;
+        }
+        #countdown-timer {
+            position: absolute;
+            top: 20px;
+            left: 50%;
+            transform: translateX(-50%);
+            color: #FFD700; /* Màu vàng kim */
+            font-family: sans-serif;
+            font-size: 1.5em;
+            text-shadow: 0 0 5px rgba(255, 215, 0, 0.5);
+            z-index: 100;
         }
     </style>
 </head>
 <body>
 
+<div id="countdown-timer">Trang sẽ chuyển trong: 60 giây</div>
+
 <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
 
 <script>
+    // --- CẤU HÌNH CHUYỂN TRANG ---
+    const TARGET_URL = "index.html"; // <-- THAY THẾ URL MỤC TIÊU CỦA BẠN VÀO ĐÂY
+    const DELAY_SECONDS = 30; // 60 giây
+
     // --- 1. THIẾT LẬP CẢNH (SCENE) ---
     const scene = new THREE.Scene();
     const camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
@@ -42,7 +64,7 @@
     let giftBox;
 
     // 3a. Thân hộp (Khối lập phương lớn)
-    const boxGeometry = new THREE.BoxGeometry(5, 5, 5); // Kích thước 5x5x5
+    const boxGeometry = new THREE.BoxGeometry(5, 5, 5);
     const boxMaterial = new THREE.MeshStandardMaterial({
         color: 0xE57373, // Màu đỏ/hồng cho thân hộp
         metalness: 0.1,
@@ -81,9 +103,8 @@
         requestAnimationFrame(animate);
 
         if (giftBox) {
-            // TẠO HIỆU ỨNG QUAY VÒNG
             giftBox.rotation.y += 0.01;
-            giftBox.rotation.x += 0.005; // Quay nhẹ theo trục X để tăng hiệu ứng 3D
+            giftBox.rotation.x += 0.005;
         }
 
         renderer.render(scene, camera);
@@ -99,6 +120,29 @@
         camera.updateProjectionMatrix();
         renderer.setSize(window.innerWidth, window.innerHeight);
     }
+
+    // --- 7. LOGIC TỰ ĐỘNG CHUYỂN TRANG (AUTOREDIRECT LOGIC) ---
+    const timerElement = document.getElementById('countdown-timer');
+    let timeLeft = DELAY_SECONDS;
+
+    // Hàm cập nhật bộ đếm
+    function updateTimer() {
+        if (timeLeft > 0) {
+            timerElement.textContent = `Trang sẽ chuyển trong: ${timeLeft} giây`;
+            timeLeft--;
+        } else {
+            // Khi hết thời gian, thực hiện chuyển trang
+            timerElement.textContent = "Đang chuyển trang...";
+            clearInterval(timerInterval);
+            window.location.href = TARGET_URL;
+        }
+    }
+
+    // Thiết lập Interval để chạy hàm updateTimer mỗi giây
+    const timerInterval = setInterval(updateTimer, 1000);
+
+    // Gọi hàm lần đầu tiên để hiển thị ngay lập tức
+    updateTimer();
 
 </script>
 </body>
