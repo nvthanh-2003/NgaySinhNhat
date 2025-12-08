@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Hộp Quà 3D Quay Vòng 🎉</title>
+    <style>
+        body {
+            margin: 0;
+            overflow: hidden; /* Ẩn thanh cuộn */
+            background-color: #000000; /* Nền tối */
+        }
+        canvas {
+            display: block;
+        }
+    </style>
+</head>
+<body>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+
+<script>
+    // --- 1. THIẾT LẬP CẢNH (SCENE) ---
+    const scene = new THREE.Scene();
+    const camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
+    const renderer = new THREE.WebGLRenderer({ antialias: true });
+
+    renderer.setSize(window.innerWidth, window.innerHeight);
+    document.body.appendChild(renderer.domElement);
+
+    scene.background = new THREE.Color(0x111111);
+
+    // --- 2. ÁNH SÁNG (LIGHTING) ---
+    const ambientLight = new THREE.AmbientLight(0xffffff, 1.5);
+    scene.add(ambientLight);
+
+    const directionalLight = new THREE.DirectionalLight(0xffffff, 1.5);
+    directionalLight.position.set(5, 5, 5).normalize();
+    scene.add(directionalLight);
+
+    // --- 3. TẠO HỘP QUÀ (GIFT BOX MODEL) ---
+    let giftBox;
+
+    // 3a. Thân hộp (Khối lập phương lớn)
+    const boxGeometry = new THREE.BoxGeometry(5, 5, 5); // Kích thước 5x5x5
+    const boxMaterial = new THREE.MeshStandardMaterial({
+        color: 0xE57373, // Màu đỏ/hồng cho thân hộp
+        metalness: 0.1,
+        roughness: 0.5
+    });
+    const box = new THREE.Mesh(boxGeometry, boxMaterial);
+
+    // 3b. Ruy băng dọc (Vertical Ribbon)
+    const vRibbonGeometry = new THREE.BoxGeometry(0.8, 5.2, 5.2);
+    const ribbonMaterial = new THREE.MeshStandardMaterial({
+        color: 0xFFD700, // Màu vàng kim cho ruy băng
+        metalness: 0.8,
+        roughness: 0.2
+    });
+    const vRibbon = new THREE.Mesh(vRibbonGeometry, ribbonMaterial);
+
+    // 3c. Ruy băng ngang (Horizontal Ribbon)
+    const hRibbonGeometry = new THREE.BoxGeometry(5.2, 5.2, 0.8);
+    const hRibbon = new THREE.Mesh(hRibbonGeometry, ribbonMaterial);
+
+    // 3d. Nhóm các phần tử lại thành Hộp Quà (Group)
+    giftBox = new THREE.Group();
+    giftBox.add(box);
+    giftBox.add(vRibbon);
+    giftBox.add(hRibbon);
+
+    // Điều chỉnh kích thước và thêm vào scene
+    giftBox.scale.set(1.5, 1.5, 1.5);
+    scene.add(giftBox);
+
+    // --- 4. CẤU HÌNH CAMERA ---
+    camera.position.z = 20;
+
+    // --- 5. VÒNG LẶP HOẠT HÌNH (ANIMATION LOOP) ---
+    function animate() {
+        requestAnimationFrame(animate);
+
+        if (giftBox) {
+            // TẠO HIỆU ỨNG QUAY VÒNG
+            giftBox.rotation.y += 0.01;
+            giftBox.rotation.x += 0.005; // Quay nhẹ theo trục X để tăng hiệu ứng 3D
+        }
+
+        renderer.render(scene, camera);
+    }
+
+    animate();
+
+    // --- 6. PHẢN HỒI KÍCH THƯỚC CỬA SỔ (RESPONSIVENESS) ---
+    window.addEventListener('resize', onWindowResize, false);
+
+    function onWindowResize() {
+        camera.aspect = window.innerWidth / window.innerHeight;
+        camera.updateProjectionMatrix();
+        renderer.setSize(window.innerWidth, window.innerHeight);
+    }
+
+</script>
+</body>
+</html>

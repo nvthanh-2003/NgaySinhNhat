@@ -1,0 +1,221 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Pháo Hoa Ăn Mừng! 🎉</title>
+    <style>
+        body {
+            margin: 0;
+            overflow: hidden; /* Quan trọng để canvas chiếm toàn màn hình */
+            background-color: #000; /* Nền tối cho pháo hoa nổi bật */
+            color: white;
+            font-family: 'Arial', sans-serif;
+            text-align: center;
+        }
+
+        /* Canvas sẽ là nơi vẽ pháo hoa */
+        canvas {
+            display: block;
+        }
+
+        /* Tiêu đề ăn mừng */
+        #celebration-text {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            z-index: 10;
+            font-size: 4em;
+            color: #FFD700; /* Màu vàng kim */
+            text-shadow: 0 0 10px rgba(255, 255, 255, 0.8), 0 0 20px rgba(255, 165, 0, 0.6);
+            padding: 10px 20px;
+            background: rgba(0, 0, 0, 0.4);
+            border-radius: 10px;
+            animation: pulse 1.5s infinite alternate;
+        }
+
+        @keyframes pulse {
+            0% {
+                transform: translate(-50%, -50%) scale(1);
+            }
+            100% {
+                transform: translate(-50%, -50%) scale(1.05);
+            }
+        }
+    </style>
+</head>
+<body>
+<body>
+<div id="celebration-text">
+    CHÚC MỪNG SINH NHẬT! 🎉
+</div>
+
+<canvas id="fireworksCanvas"></canvas>
+
+<script>
+    const canvas = document.getElementById('fireworksCanvas');
+    const ctx = canvas.getContext('2d');
+
+    let W = window.innerWidth;
+    let H = window.innerHeight;
+    canvas.width = W;
+    canvas.height = H;
+
+    window.addEventListener('resize', () => {
+        W = window.innerWidth;
+        H = window.innerHeight;
+        canvas.width = W;
+        canvas.height = H;
+    });
+
+    // --- HÀM TẠO MÀU SẮC NGẪU NHIÊN ---
+    function randomColor() {
+        const r = Math.floor(Math.random() * 255);
+        const g = Math.floor(Math.random() * 255);
+        const b = Math.floor(Math.random() * 255);
+        return `rgb(${r},${g},${b})`;
+    }
+
+    // --- LỚP HẠT PHÁO HOA (Particle) ---
+    class Particle {
+        constructor(x, y, color, angle, speed) {
+            this.x = x;
+            this.y = y;
+            this.color = color || randomColor();
+            this.radius = Math.random() * 1.5 + 0.5;
+
+            // Tính toán vận tốc dựa trên góc và tốc độ
+            this.velocity = {
+                x: Math.cos(angle) * speed,
+                y: Math.sin(angle) * speed
+            };
+
+            this.alpha = 1; // Độ trong suốt ban đầu
+            this.friction = 0.98; // Giảm nhẹ lực cản
+            this.gravity = 0.02; // *** TRỌNG LỰC RẤT NHỎ, GẦN NHƯ KHÔNG TRỌNG LỰC ***
+        }
+
+        draw() {
+            ctx.save();
+            ctx.globalAlpha = this.alpha;
+            ctx.beginPath();
+            ctx.arc(this.x, this.y, this.radius, 0, Math.PI * 2, false);
+            ctx.fillStyle = this.color;
+            ctx.fill();
+            ctx.restore();
+        }
+
+        update() {
+            // Giảm vận tốc (lực cản không khí)
+            this.velocity.x *= this.friction;
+            this.velocity.y *= this.friction;
+
+            // Thêm trọng lực (rất ít)
+            this.velocity.y += this.gravity;
+
+            // Cập nhật vị trí
+            this.x += this.velocity.x;
+            this.y += this.velocity.y;
+
+            // Giảm độ trong suốt (tàn rất chậm)
+            this.alpha -= 0.005; // *** GIẢM ĐỘ ALPHA RẤT CHẬM (0.005) ***
+        }
+    }
+
+    let particles = [];
+
+    // --- HÀM TẠO PHÁO HOA PHUN LÊN CAO ---
+    function createHighFountain(x, y, color) {
+        const particleCount = 80;
+        // *** TỐC ĐỘ BAN ĐẦU CAO HƠN ĐỂ PHUN LÊN CAO ***
+        const baseSpeed = 5;
+
+        for (let i = 0; i < particleCount; i++) {
+            // Góc phun: Tập trung quanh 270 độ (thẳng đứng) với một độ lệch nhỏ (tỏa rộng)
+            // Góc từ 240 độ đến 300 độ.
+            const angleDeg = Math.random() * 60 + 240;
+            const angleRad = (Math.PI / 180) * angleDeg;
+
+            // Vận tốc ngẫu nhiên dựa trên tốc độ cơ sở
+            const speed = baseSpeed * (Math.random() * 0.5 + 0.75);
+
+            particles.push(new Particle(x, y, color, angleRad, speed));
+        }
+    }
+
+    // --- VÒNG LẶP HOẠT HÌNH CHÍNH ---
+    function animate() {
+        requestAnimationFrame(animate);
+
+        // Xóa Canvas với độ trong suốt thấp (0.1)
+        ctx.fillStyle = 'rgba(0, 0, 0, 0.1)';
+        ctx.fillRect(0, 0, W, H);
+
+        // Lọc các hạt đã tàn
+        particles = particles.filter(p => p.alpha > 0);
+
+        // Cập nhật và vẽ
+        particles.forEach(p => {
+            p.update();
+            p.draw();
+        });
+
+        // Tự động bắn pháo hoa từ 1/3 dưới cùng màn hình với tần suất ổn định
+        if (Math.random() < 0.05) {
+            const x = Math.random() * W;
+            // Bắn từ 1/3 dưới cùng (từ H * 0.66 đến H)
+            const y = Math.random() * (H / 3) + (H * 0.66);
+            createHighFountain(x, y);
+        }
+    }
+
+    animate();
+
+    // Bắn vài quả ngay lúc đầu từ đáy màn hình
+    for (let i = 0; i < 6; i++) {
+        setTimeout(() => {
+            const x = Math.random() * W;
+            const y = H - 5; // Bắn từ gần sát đáy màn hình
+            createHighFountain(x, y);
+        }, i * 250);
+    }
+
+    // ... Phần code Pháo hoa giữ nguyên ...
+
+    // === CODE KHẮC PHỤC LỖI AUTOPLAY (Tối ưu) ===
+    document.addEventListener('DOMContentLoaded', () => {
+        const music = document.getElementById('backgroundMusic');
+        const audioMessage = document.getElementById('audio-message');
+
+        const playPromise = music.play();
+
+        if (playPromise !== undefined) {
+            playPromise.then(() => {
+                // Autoplay thành công
+            }).catch(error => {
+                // Autoplay bị chặn -> Hiển thị thông báo và lắng nghe tương tác
+                audioMessage.style.display = 'block';
+
+                const enableMusic = () => {
+                    music.play();
+                    audioMessage.style.display = 'none'; // Ẩn thông báo sau khi phát
+                    document.body.removeEventListener('click', enableMusic);
+                    document.body.removeEventListener('touchstart', enableMusic);
+                };
+
+                // Lắng nghe sự kiện click/touch đầu tiên trên body
+                document.body.addEventListener('click', enableMusic);
+                document.body.addEventListener('touchstart', enableMusic);
+            });
+        }
+    });
+    // =================================================================
+</script>
+
+</body>
+</html>
+</script>
+
+</body>
+</html>

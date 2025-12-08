@@ -1,0 +1,164 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Bánh Sinh Nhật</title>
+    <style>
+        :root {
+            /* Định nghĩa các biến màu */
+            --cake-color: #f7a0b3; /* Hồng dâu */
+            --icing-color: #ffffff; /* Kem trắng */
+            --candle-color: #ffcc00; /* Vàng nến số */
+            --flame-color: #ff9900; /* Lửa cam */
+            --flame-tip-color: #fffb00; /* Lửa vàng */
+            --base-color: #6d4c41; /* Màu đế bánh */
+            --dark-background: #111; /* Nền tối */
+        }
+
+        body {
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            margin: 0;
+            background-color: var(--dark-background);
+            font-family: 'Arial', sans-serif;
+            overflow: hidden;
+        }
+
+        /* --- VÙNG CHỨA CHÍNH CỦA BÁNH --- */
+        .cake-container {
+            display: flex;
+            /* QUAN TRỌNG: Đảo ngược thứ tự các phần tử (layer-7 sẽ nằm trên layer-1) */
+            flex-direction: column-reverse;
+            align-items: center;
+            position: relative;
+            transform: scale(0.8);
+        }
+
+        /* --- HIỆU ỨNG TẦNG BÁNH --- */
+        .cake-layer {
+            position: relative;
+            background-color: var(--cake-color);
+            border-radius: 50% / 10%;
+            border: 5px solid var(--icing-color);
+            box-shadow: 0 5px 0 0 var(--base-color), 0 10px 0 0 rgba(0, 0, 0, 0.2);
+            /* Chồng các tầng lên nhau */
+            margin-bottom: -20px;
+        }
+
+        /* Định nghĩa kích thước từng tầng và Z-INDEX ĐÃ SỬA */
+        /* Tầng lớn hơn phải có Z-index cao hơn tầng ngay trên nó để phần kem không bị cắt */
+        .layer-1 { width: 350px; height: 100px; z-index: 7; } /* Dưới cùng (Z-INDEX CAO NHẤT) */
+        .layer-2 { width: 300px; height: 90px; z-index: 6; }
+        .layer-3 { width: 250px; height: 80px; z-index: 5; }
+        .layer-4 { width: 200px; height: 70px; z-index: 4; }
+        .layer-5 { width: 150px; height: 60px; z-index: 3; }
+        .layer-6 { width: 100px; height: 50px; z-index: 2; }
+        .layer-7 { width: 50px; height: 40px; z-index: 1; } /* Trên cùng (Z-INDEX THẤP NHẤT) */
+
+        /* --- NẾN SỐ 22 LỚN (Đặt trên Tầng 7 - tầng nhỏ nhất) --- */
+        #number-candle-container {
+            position: absolute;
+            top: -100px;
+            z-index: 100;
+            left: 50%;
+            transform: translateX(-50%);
+            display: flex;
+            align-items: flex-end;
+            height: 120px;
+        }
+
+        .number-digit {
+            width: 40px;
+            height: 100px;
+            line-height: 80px;
+            font-size: 4em;
+            font-weight: bold;
+            color: var(--candle-color);
+            text-shadow: 2px 2px 5px rgba(0, 0, 0, 0.5);
+            border-radius: 5px;
+            margin: 0 5px;
+            text-align: center;
+            position: relative;
+            box-shadow: 0 0 10px rgba(255, 255, 0, 0.5);
+        }
+
+        .number-flame {
+            position: absolute;
+            width: 10px;
+            height: 15px;
+            background: var(--flame-color);
+            border-radius: 50% 50% 50% 50% / 60% 60% 40% 40%;
+            top: -15px;
+            left: 50%;
+            transform: translateX(-50%);
+            box-shadow: 0 0 8px 2px var(--flame-color);
+            animation: flicker 0.5s ease-in-out infinite alternate;
+        }
+
+        /* Hiệu ứng chớp nháy của lửa */
+        @keyframes flicker {
+            0% { transform: translateX(-50%) scale(1); background: var(--flame-tip-color); box-shadow: 0 0 5px 1px var(--flame-tip-color); }
+            50% { transform: translateX(-50%) scale(1.05); background: var(--flame-color); box-shadow: 0 0 7px 2px var(--flame-color); }
+            100% { transform: translateX(-50%) scale(0.95); background: var(--flame-tip-color); box-shadow: 0 0 5px 1px var(--flame-tip-color); }
+        }
+
+        /* --- VĂN BẢN CHÚC MỪNG --- */
+        h1 {
+            color: var(--icing-color);
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);
+            margin-bottom: 20px;
+        }
+
+        /* --- ĐẾ BÁNH --- */
+        .cake-base {
+            width: 400px;
+            height: 30px;
+            background-color: var(--base-color);
+            border-radius: 50% / 10%;
+            margin-top: -10px;
+            box-shadow: 0 5px 10px rgba(0, 0, 0, 0.5);
+            z-index: 8;
+        }
+    </style>
+</head>
+<body>
+
+<h1> Chúc Mừng Sinh Nhật Tuổi 22! 🎉</h1>
+
+<div class="cake-container">
+
+    <div class="cake-base"></div>
+
+    <div class="cake-layer layer-1"></div>
+
+    <div class="cake-layer layer-2"></div>
+
+    <div class="cake-layer layer-3"></div>
+
+    <div class="cake-layer layer-4"></div>
+
+    <div class="cake-layer layer-5"></div>
+
+    <div class="cake-layer layer-6"></div>
+
+    <div class="cake-layer layer-7">
+        <div id="number-candle-container">
+            <div class="number-digit">
+                2
+                <div class="number-flame"></div>
+            </div>
+            <div class="number-digit">
+                2
+                <div class="number-flame"></div>
+            </div>
+        </div>
+    </div>
+
+</div>
+
+</body>
+</html>
