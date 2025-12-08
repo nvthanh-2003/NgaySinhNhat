@@ -3,8 +3,21 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Lời nhắn</title>
+    <title>Lời Tỏ Tình Lãng Mạn</title>
     <style>
+        /* Tải font Playfair Display cho phong cách cổ điển */
+        @import url('https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700&display=swap');
+
+        :root {
+            --bg-color: #f8f4e3; /* Màu nền kem nhạt */
+            --card-color: #fffaf0; /* Trắng ngà cho thiệp */
+            --gold-border: #b8860b; /* Vàng đồng đậm */
+            --gold-light: #f0e68c; /* Vàng nhạt */
+            --text-color: #5d4037; /* Nâu đậm */
+            --yes-color: #daa520; /* Vàng kim cho nút Đồng Ý */
+            --no-color: #8b4513; /* Nâu đất cho nút Không */
+        }
+
         body {
             display: flex;
             flex-direction: column;
@@ -12,102 +25,176 @@
             justify-content: center;
             min-height: 100vh;
             margin: 0;
-            font-family: 'Arial', sans-serif;
-            background-color: #ffe0f0;
-            color: #d63384;
+            font-family: 'Playfair Display', serif;
+            background-color: var(--bg-color);
+            color: var(--text-color);
             text-align: center;
-            overflow: hidden; /* Quan trọng để nút không bị khuất */
+            overflow: hidden;
+            /* Thêm họa tiết nền nhẹ (giả lập hoa hồng) */
+            background-image: radial-gradient(circle at 100% 100%, rgba(255, 250, 240, 0.5) 1%, transparent 10%),
+            radial-gradient(circle at 0% 0%, rgba(255, 250, 240, 0.5) 1%, transparent 10%);
+            background-size: 50% 50%;
+            background-repeat: no-repeat;
+            background-position: top left, bottom right;
         }
+
+        /* --- KHUNG THIỆP CHÍNH (Card Container) --- */
+        .card-container {
+            background-color: var(--card-color);
+            padding: 40px 30px;
+            border-radius: 8px;
+            box-shadow: 0 5px 20px rgba(0, 0, 0, 0.15);
+            max-width: 450px;
+            width: 90%;
+            position: relative;
+            z-index: 5;
+        }
+
+        /* Hiệu ứng Khung Vàng Kim */
+        .card-container::before {
+            content: '';
+            position: absolute;
+            top: 10px;
+            left: 10px;
+            right: 10px;
+            bottom: 10px;
+            border: 3px solid var(--gold-border);
+            pointer-events: none;
+            z-index: 5;
+        }
+
         h1 {
             font-size: 2.5em;
             margin-bottom: 30px;
-            color: #c2185b;
+            color: var(--gold-border);
+            text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.1);
         }
+
+        /* --- KHU VỰC NÚT BẤM --- */
         .buttons {
             display: flex;
-            gap: 50px;
-            position: relative; /* Container cho các nút */
+            justify-content: center;
+            gap: 20px; /* Giảm gap cho điện thoại */
+            position: relative;
+            margin-top: 30px;
         }
+
         .btn {
-            padding: 15px 30px;
-            font-size: 1.2em;
+            padding: 12px 25px;
+            font-size: 1.1em;
             font-weight: bold;
-            border: none;
+            border: 2px solid var(--gold-border);
             border-radius: 50px;
             cursor: pointer;
             transition: all 0.3s ease;
-            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
         }
+
+        /* Nút ĐỒNG Ý */
         #yes-btn {
-            background-color: #4CAF50;
+            background-color: var(--yes-color);
             color: white;
         }
         #yes-btn:hover {
-            transform: scale(1.05);
-            background-color: #45a049;
-        }
-        #no-btn {
-            background-color: #f44336;
-            color: white;
-            position: absolute; /* Quan trọng: để di chuyển tự do */
-            left: 200px; /* Vị trí ban đầu tương đối với .buttons */
-            top: 0;
+            transform: scale(1.1);
+            background-color: var(--gold-light);
+            color: var(--text-color);
         }
 
-        /* Modal cho lời đồng ý */
+        /* Nút KHÔNG (Cần thiết lập ban đầu để tránh nhảy) */
+        #no-btn {
+            background-color: var(--no-color);
+            color: white;
+            position: absolute;
+            top: 0;
+            /* Cần thiết lập vị trí ban đầu cho nút NO để nó nằm cạnh YES */
+            transform: translateX(120%); /* Dịch chuyển sang phải so với vị trí ban đầu */
+        }
+
+        /* Khi nút NO chuyển sang position: fixed */
+        #no-btn[style*="fixed"] {
+            transition: all 0.1s ease !important;
+        }
+
+        /* --- MODAL (Lời Đồng Ý) --- */
         .modal {
-            display: none; /* Ẩn ban đầu */
+            display: none;
             position: fixed;
-            z-index: 1;
+            z-index: 100;
             left: 0;
             top: 0;
             width: 100%;
             height: 100%;
-            overflow: auto;
-            background-color: rgba(0,0,0,0.4);
+            background-color: rgba(0,0,0,0.6);
         }
         .modal-content {
-            background-color: #fff;
+            background-color: var(--card-color);
             margin: 15% auto;
-            padding: 40px;
-            border-radius: 15px;
-            width: 80%;
-            max-width: 400px;
-            box-shadow: 0 5px 15px rgba(0,0,0,0.3);
+            padding: 30px;
+            border-radius: 10px;
+            width: 90%;
+            max-width: 350px;
+            box-shadow: 0 5px 25px var(--gold-border);
             animation: fadeIn 0.5s;
-        }
-        @keyframes fadeIn {
-            from {opacity: 0;}
-            to {opacity: 1;}
+            border: 5px solid var(--gold-light);
         }
         .modal-content h2 {
-            color: #c2185b;
+            color: var(--gold-border);
+            font-size: 2em;
         }
         .modal-content p {
             font-size: 1.1em;
-            margin-top: 20px;
+            margin-top: 15px;
+            color: var(--text-color);
         }
         .modal-content img {
-            width: 300px;
+            width: 80%;
+            max-width: 250px;
+            height: auto;
             margin-top: 15px;
+            border-radius: 5px;
         }
+
+        /* --- MEDIA QUERY CHO ĐIỆN THOẠI (Responsive) --- */
+        @media (max-width: 600px) {
+            .card-container {
+                padding: 30px 20px;
+                max-width: 95%;
+            }
+            h1 {
+                font-size: 2em;
+                margin-bottom: 20px;
+            }
+            .btn {
+                padding: 10px 20px;
+                font-size: 1em;
+            }
+            /* Điều chỉnh vị trí nút NO ban đầu để chúng không quá gần nhau */
+            #no-btn {
+                transform: translateX(100%);
+            }
+        }
+
     </style>
 </head>
 <body>
 
-<h1>Có đổ tui khum</h1>
+<div class="card-container">
+    <h1>Có đổ tui khum?</h1>
 
-<div class="buttons">
-    <button id="yes-btn" class="btn" onclick="handleYes()">ĐỒNG Ý</button>
+    <div class="buttons">
+        <button id="yes-btn" class="btn" onclick="handleYes()">ĐỒNG Ý</button>
 
-    <button id="no-btn" class="btn">KHÔNG</button>
+        <button id="no-btn" class="btn">KHÔNG</button>
+    </div>
 </div>
+
 
 <div id="successModal" class="modal">
     <div class="modal-content">
         <h2>🎉 HOAN HÔ! 🎉</h2>
-        <p>Đồng ý rùi đó nhaaa!</p>
-        <p>Tui vẫn chờ đó💖</p>
+        <p>Tuyệt vời! Anh/Em đã đồng ý rùi đó nhaaa!</p>
+        <p>Tui vẫn chờ đó 💖</p>
         <img src="img.png" alt="Heart Celebration">
     </div>
 </div>
@@ -116,22 +203,16 @@
     const noButton = document.getElementById('no-btn');
     const modal = document.getElementById('successModal');
     const buttonsContainer = document.querySelector('.buttons');
+    const cardContainer = document.querySelector('.card-container');
 
-    // Hàm lấy vị trí ngẫu nhiên
+    // Hàm lấy vị trí ngẫu nhiên trên toàn màn hình (fixed)
     function getRandomPosition() {
-        // Lấy kích thước hiện tại của cửa sổ trình duyệt
         const viewportWidth = window.innerWidth;
         const viewportHeight = window.innerHeight;
-
-        // Lấy kích thước của nút NO
         const noBtnWidth = noButton.offsetWidth;
         const noBtnHeight = noButton.offsetHeight;
 
-        // Kích thước của vùng chứa nút (chỉ để tham chiếu ban đầu, nút sẽ chạy tự do)
-        const containerRect = buttonsContainer.getBoundingClientRect();
-
-        // Tính toán vị trí ngẫu nhiên trong phạm vi màn hình
-        // Giữ nút NO trong phạm vi màn hình (có padding 10px)
+        // Tính toán vị trí ngẫu nhiên trong phạm vi màn hình, trừ đi padding an toàn 10px
         const newX = Math.floor(Math.random() * (viewportWidth - noBtnWidth - 20)) + 10;
         const newY = Math.floor(Math.random() * (viewportHeight - noBtnHeight - 20)) + 10;
 
@@ -142,39 +223,38 @@
     noButton.addEventListener('mouseover', () => {
         const newPos = getRandomPosition();
 
-        // Thiết lập vị trí mới
-        noButton.style.position = 'fixed'; // Chuyển sang fixed để chạy tự do khắp màn hình
-        noButton.style.transition = 'all 0.1s ease'; // Hiệu ứng di chuyển mượt
+        // 1. Chuyển sang fixed để di chuyển tự do khắp màn hình
+        noButton.style.position = 'fixed';
+        // 2. Kích hoạt transition mượt
+        noButton.style.transition = 'all 0.1s ease';
+
+        // 3. Thiết lập vị trí mới
         noButton.style.left = `${newPos.x}px`;
         noButton.style.top = `${newPos.y}px`;
+        noButton.style.transform = 'none'; // Bỏ transform ban đầu
     });
 
-    // Hàm xử lý khi nhấn nút ĐỒNG Ý
-    function handleYes() {
-        modal.style.display = 'block';
-    }
-
-    // Đóng modal khi click ra ngoài (tùy chọn)
-    window.onclick = function(event) {
-        if (event.target == modal) {
-            // Bạn có thể chọn không cho đóng, vì đã 'đồng ý' rồi!
-            // modal.style.display = "none";
-        }
-    }
-
-    // Tùy chọn: Ngăn nút NO click được
-    noButton.onclick = (e) => {
+    // Xử lý khi nút bị click (trên điện thoại, mouseover không hoạt động)
+    noButton.addEventListener('click', (e) => {
         e.preventDefault();
-        // Nếu cố gắng click, nút sẽ chạy ngay lập tức
+        // Giống như mouseover, buộc nút phải nhảy ngay lập tức
         const newPos = getRandomPosition();
         noButton.style.position = 'fixed';
         noButton.style.transition = 'all 0s'; // Không có hiệu ứng khi click để tránh bị click trúng
         noButton.style.left = `${newPos.x}px`;
         noButton.style.top = `${newPos.y}px`;
+        noButton.style.transform = 'none';
+
         // Bật lại transition sau một chút
         setTimeout(() => {
             noButton.style.transition = 'all 0.1s ease';
         }, 50);
+    });
+
+
+    // Hàm xử lý khi nhấn nút ĐỒNG Ý
+    function handleYes() {
+        modal.style.display = 'block';
     }
 
 </script>
