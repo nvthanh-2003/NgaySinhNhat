@@ -3,52 +3,136 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Gửi lời chúc này đến người quan trọng! 🎂</title>
-    <!-- Tải Tailwind CSS để tạo giao diện hiện đại -->
+    <title>Dành cho Em, Món Quà Yêu Thương Nhất</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <style>
-        /* Thiết lập nền và căn giữa */
+        /* Tải font chữ Playfair Display cho phong cách sang trọng */
+        @import url('https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;1,400;1,700&display=swap');
+
+        /* --- Cài đặt Chung: Nền Vàng Kem và Hoa Hồng --- */
         body {
-            font-family: 'Inter', sans-serif;
-            background: linear-gradient(135deg, #fee2e2 0%, #fecaca 100%); /* Hồng nhạt, ấm áp */
+            font-family: 'Playfair Display', serif; /* Font chữ chính */
+            /* Nền màu kem nhạt */
+            background-color: #f8f4e3;
+            color: #5d4037; /* Màu chữ nâu đậm */
             display: flex;
             justify-content: center;
             align-items: center;
             min-height: 100vh;
             margin: 0;
-            /* Đặt overflow: auto; để đảm bảo nội dung không bị cắt nếu quá lớn,
-               nhưng tôi vẫn giữ hidden để duy trì hiệu ứng pháo hoa toàn màn hình */
             overflow: hidden;
-            color: #4a4a4a;
+            /* Thêm họa tiết hoa hồng ở góc (cần hình ảnh) - Tôi sẽ sử dụng CSS giả lập màu */
+            background-image: radial-gradient(circle at 100% 100%, #fffaf0 1%, transparent 10%),
+            radial-gradient(circle at 0% 0%, #fffaf0 1%, transparent 10%),
+            radial-gradient(circle at 0% 100%, #f4e8d8 1%, transparent 10%),
+            radial-gradient(circle at 100% 0%, #f4e8d8 1%, transparent 10%);
+            background-size: 50% 50%;
+            background-repeat: no-repeat;
+            background-position: top left, bottom right, bottom left, top right;
         }
+
+        /* --- Thiệp Chúc Mừng (Khung Chính) --- */
         #greetingCard {
-            background-color: #ffffff;
-            border-radius: 24px; /* Góc bo tròn hơn */
-            box-shadow: 0 15px 40px rgba(0, 0, 0, 0.2);
-            padding: 3rem 2rem;
-            max-width: 450px; /* Giới hạn kích thước thiệp */
+            background-color: #fffaf0; /* Trắng ngà */
+            border-radius: 4px;
+            box-shadow: 0 5px 20px rgba(0, 0, 0, 0.1);
+            padding: 3rem 2.5rem;
+            max-width: 650px; /* Kích thước lớn hơn cho phong cách banner */
             width: 90%;
             text-align: center;
             position: relative;
             z-index: 10;
         }
-        #title {
-            color: #e90064; /* Màu hồng đậm */
-            font-weight: 900;
-            font-size: 2.25rem;
-            margin-bottom: 2.5rem;
-            text-shadow: 1px 1px 3px rgba(255, 192, 203, 0.5);
+
+        /* --- Hiệu Ứng Khung Vàng Kim (Quan trọng nhất) --- */
+        #greetingCard::before {
+            content: '';
+            position: absolute;
+            top: 10px;
+            left: 10px;
+            right: 10px;
+            bottom: 10px;
+            border: 5px solid #daa520; /* Viền vàng đồng ngoài */
+            pointer-events: none;
+            z-index: 5;
+        }
+        #greetingCard::after {
+            content: '';
+            position: absolute;
+            top: 20px;
+            left: 20px;
+            right: 20px;
+            bottom: 20px;
+            border: 2px solid #f0e68c; /* Viền vàng nhạt hơn bên trong */
+            pointer-events: none;
+            z-index: 5;
         }
 
-        /* Thêm CSS này để đảm bảo video luôn nằm trong giới hạn của #greetingCard */
+        /* --- Tiêu Đề --- */
+        #title {
+            color: #b8860b; /* Màu vàng đồng đậm */
+            font-weight: 700;
+            font-size: 2.5rem;
+            margin-bottom: 2rem;
+            text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.1);
+            line-height: 1.2;
+        }
+
+        /* --- Nút Mở Quà (Phong cách chạm khắc) --- */
+        #showButton {
+            font-family: 'Playfair Display', serif;
+            font-size: 1.25rem;
+            color: #5d4037;
+            background-color: #fffaf0;
+            border: 2px solid #daa520;
+            box-shadow: 0 4px 8px rgba(184, 134, 11, 0.3);
+            border-radius: 50px;
+            padding: 10px 30px;
+            transition: all 0.3s ease;
+        }
+
+        #showButton:hover {
+            background-color: #f0e68c;
+            transform: translateY(-2px);
+        }
+
+        /* --- Nội dung và Video (Tùy chỉnh font) --- */
+        #message p {
+            font-size: 1.1rem;
+            font-family: 'Playfair Display', serif;
+            color: #5d4037;
+        }
+
+        /* Đảm bảo video trong container nằm chính giữa và có viền */
+        #videoContainer {
+            /* Loại bỏ viền bo Tailwind cũ */
+            border-radius: 4px !important;
+            border: 3px solid #daa520; /* Viền vàng cho video */
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+            max-width: 80%;
+            margin: 2rem auto;
+            position: relative;
+            z-index: 10;
+        }
+
         #videoContainer video {
             width: 100%;
             height: auto;
             display: block;
-            max-width: 100%;
         }
 
-        /* Ẩn/Hiện message và video */
+        /* --- Confetti (Giữ nguyên) --- */
+        #confetti {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: 5;
+        }
+
+        /* Ẩn/Hiện message */
         #message {
             opacity: 0;
             transform: translateY(20px);
@@ -59,112 +143,97 @@
             opacity: 1;
             transform: translateY(0);
         }
-        #videoContainer {
-            transition: opacity 0.5s ease-in-out;
-        }
         .hidden-element {
-            display: none;
+            display: none !important;
         }
 
-        #personImage {
-            width: 120px;
-            height: 120px;
-            object-fit: cover;
-            border-radius: 50%;
-            border: 4px solid #fbcfe8;
-            margin: 0 auto 1.5rem;
-            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+        /* Nút Play thủ công nếu Autoplay bị chặn */
+        #manualPlayButton {
+            font-family: 'Playfair Display', serif;
+            background-color: #b8860b !important;
+            color: white !important;
+            border-radius: 5px !important;
+            padding: 8px 15px;
+            margin-top: 1rem;
             display: block;
-        }
-        .signature {
-            margin-top: 1.5rem;
-            font-style: italic;
-            font-weight: 600;
-            color: #e90064;
-            text-align: right;
-        }
-        .emoji-section {
-            margin: 2rem 0;
-            font-size: 2rem;
-            display: flex;
-            justify-content: space-around;
-        }
-        #showButton {
-            transition: all 0.3s ease;
-            transform: scale(1);
-        }
-        #showButton:hover {
-            transform: scale(1.05);
-            box-shadow: 0 5px 15px rgba(233, 0, 100, 0.4);
+            margin-left: auto;
+            margin-right: auto;
         }
 
-        /* Vị trí Canvas Confetti */
-        #confetti {
-            position: absolute;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            pointer-events: none;
-            z-index: 5;
+        /* --- Điều chỉnh cho màn hình nhỏ --- */
+        @media (max-width: 640px) {
+            #title {
+                font-size: 2rem;
+            }
+            #greetingCard {
+                padding: 2rem 1.5rem;
+            }
+            #showButton {
+                font-size: 1rem;
+            }
+            #message p {
+                font-size: 1rem;
+            }
         }
     </style>
 </head>
 <body>
 
-<div id="greetingCard" class="shadow-xl">
-    <h1 id="title">Chúc mừng sinh nhật em!</h1>
+<div id="greetingCard">
+    <h1 id="title">Dành cho Em, Món Quà Yêu Thương Nhất</h1>
 
-    <!-- 1. CONTAINER VIDEO (Ẩn ban đầu) -->
+    <div id="initialMessage">
+        <p class="mb-4 leading-relaxed italic text-lg">Gửi tới em,</p>
+        <p class="mb-6 leading-relaxed">Gửi lời chúc tốt đẹp nhất đến một người xinh đẹp và là người trân trọng nhất đối với anh! Chúc em sinh nhật thật ấm áp và hạnh phúc nhé. Chúc em tuổi mới luôn rạng rỡ, hạnh phúc, và đạt được mọi điều mình mong muốn. Tuy ở xa không đón sinh nhật được cùng nhưng vẫn mong những điều tuyệt vời được gửi đến với em.</p>
+    </div>
+
+    <button id="showButton" onclick="revealMessage()"
+            class="mt-6 hover:shadow-xl focus:outline-none transition duration-300 ease-in-out">
+        Chạm Để Mở Trải Tim Anh
+    </button>
+
     <div id="videoContainer" class="hidden-element rounded-xl overflow-hidden mb-4">
-        <!-- Đã loại bỏ width="100%" height="auto" ở đây và thay thế bằng CSS để kiểm soát tốt hơn -->
         <video id="birthdayVideo" controls>
-            <!-- IMPORTANT: Thay thế liên kết này bằng URL video công khai của bạn -->
             <source src="7286179828977.mp4" type="video/mp4">
             Trình duyệt của bạn không hỗ trợ thẻ video.
         </video>
     </div>
 
 
-    <!-- 2. NỘI DUNG THIỆP (Ẩn ban đầu) -->
     <div id="message" class="hidden-element">
-        <img id="personImage" src="anh2.jpg" alt="Người tôi yêu" class="mx-auto">
+        <img id="personImage" src="anh2.jpg" alt="Người tôi yêu" class="mx-auto" style="border-radius: 50%; width: 120px; height: 120px; object-fit: cover; margin-bottom: 1.5rem; border: 4px solid #f0e68c;">
 
-        <p class="mb-3">Gửi tới em,</p>
-        <p class="mb-3 leading-relaxed">Gửi lời chúc tốt đẹp nhất đến một người xinh đẹp và là người trân trọng nhất đối với anh! Chúc em sinh nhật thật ấm áp và hạnh phúc nhé. Chúc em tuổi mới luôn rạng rỡ, hạnh phúc, và đạt được mọi điều mình mong muốn. Tuy ở xa không đón sinh nhật được cùng nhưng vẫn mong những điều tuyệt vời được gửi đến với em</p>
-        <p class="signature">Ngày tuyệt vời nhất!</p>
+        <p class="mb-3 leading-relaxed">Món quà thứ hai dành cho em:</p>
+        <p class="mb-3 leading-relaxed">Đây là tất cả những gì anh muốn nói sau khi em xem video. Em là nguồn động lực và niềm vui lớn nhất của anh. Mỗi khoảnh khắc bên em đều là quý giá. Hãy sống thật vui vẻ và hạnh phúc, vì em xứng đáng với mọi điều tốt đẹp trên thế giới này.</p>
+        <p class="signature" style="margin-top: 1.5rem; font-style: italic; font-weight: 600; color: #b8860b; text-align: right;">Ngày tuyệt vời nhất!</p>
 
-        <div class="emoji-section">
-            <a href="ToTinh.html">💖</a>
-            <a href="PhaoHoa.html">🎉</a>
-            <a href="BanhSinhNhat.html">🎂</a>
-            <a href="HopQua.html">🎁</a>
+        <div class="emoji-section" style="margin: 2rem 0; font-size: 2rem; display: flex; justify-content: space-around;">
+            <a href="ToTinh.html" class="hover:scale-110 transition">💖</a>
+            <a href="PhaoHoa.html" class="hover:scale-110 transition">🎉</a>
+            <a href="BanhSinhNhat.html" class="hover:scale-110 transition">🎂</a>
+            <a href="HopQua.html" class="hover:scale-110 transition">🎁</a>
         </div>
     </div>
 
-    <!-- 3. NÚT MỞ QUÀ -->
-    <button id="showButton" onclick="revealMessage()"
-            class="mt-6 px-8 py-3 bg-pink-500 text-white font-bold rounded-full shadow-lg hover:bg-pink-600 focus:outline-none focus:ring-4 focus:ring-pink-300 transition duration-300 ease-in-out">
-        Nhấp vào đây để mở quà
-    </button>
 </div>
 
 <canvas id="confetti"></canvas>
 
 <script>
     // Định nghĩa các biến DOM
+    const initialMessage = document.getElementById('initialMessage');
     const message = document.getElementById('message');
     const showButton = document.getElementById('showButton');
     const videoContainer = document.getElementById('videoContainer');
     const birthdayVideo = document.getElementById('birthdayVideo');
+    const title = document.getElementById('title');
 
-    // Khởi tạo Canvas Confetti
+    // Khởi tạo Canvas Confetti (Giữ nguyên logic của bạn)
     const canvas = document.getElementById('confetti');
     const ctx = canvas.getContext('2d');
     let particles = [];
-    const colors = ['#f44336', '#e91e63', '#9c27b0', '#673ab7', '#3f51b5', '#2196f3', '#00bcd4', '#009688', '#4caf50', '#8bc34a', '#ffeb3b', '#ffc107', '#ff9800', '#ff5722'];
+    const colors = ['#daa520', '#b8860b', '#f0e68c', '#fffaf0', '#e90064', '#f44336']; // Thêm màu vàng kim
 
-    // Cấu hình Confetti và Animation (giữ nguyên từ phiên bản trước)
     function resizeCanvas() {
         canvas.width = window.innerWidth;
         canvas.height = window.innerHeight;
@@ -215,7 +284,6 @@
             particles[i].draw();
         }
 
-        // Chỉ tiếp tục animation nếu còn hạt pháo hoa
         if (particles.length > 0) {
             requestAnimationFrame(animateConfetti);
         }
@@ -236,10 +304,12 @@
         // Ẩn video và container
         videoContainer.classList.add('hidden-element');
 
-        // Hiển thị thông điệp
+        // Cập nhật tiêu đề
+        title.textContent = "Lời Chúc Từ Trái Tim Anh";
+
+        // Hiển thị thông điệp cuối cùng
         message.classList.remove('hidden-element');
         setTimeout(() => {
-            // Đợi một chút để transition hoạt động mượt mà
             message.classList.add('visible');
         }, 100);
 
@@ -254,18 +324,13 @@
 
     // Sự kiện khi người dùng tắt video (bấm nút dừng hoặc thoát fullscreen)
     birthdayVideo.addEventListener('pause', () => {
-        // Nếu video bị dừng và chưa kết thúc, hỏi người dùng có muốn bỏ qua không
         if (birthdayVideo.currentTime > 0 && birthdayVideo.currentTime < birthdayVideo.duration && !message.classList.contains('visible')) {
-            // Thay thế cho alert()
-            // Sử dụng một modal tùy chỉnh thay vì window.confirm
             const confirmSkip = window.confirm('Bạn có muốn bỏ qua video và xem thông điệp chúc mừng không?');
             if (confirmSkip) {
-                // Tắt video và hiển thị thông điệp
                 birthdayVideo.pause();
                 birthdayVideo.currentTime = 0;
                 showMessageAndConfetti();
             } else {
-                // Tiếp tục chơi video
                 birthdayVideo.play().catch(e => console.error("Could not resume play:", e));
             }
         }
@@ -273,33 +338,34 @@
 
     // Hàm được gọi khi nhấn nút "Mở quà"
     function revealMessage() {
-        // 1. Ẩn nút "Mở quà"
+        // 1. Ẩn nội dung khởi đầu và nút
+        initialMessage.classList.add('hidden-element');
         showButton.classList.add('hidden-element');
 
         // 2. Hiện container video và phát video
         videoContainer.classList.remove('hidden-element');
 
-        // Chơi video (nếu có nguồn hợp lệ)
+        // Cập nhật tiêu đề
+        title.textContent = "Món Quà Đầu Tiên Dành Cho Em";
+
+
         if (birthdayVideo.src || birthdayVideo.querySelector('source') && birthdayVideo.querySelector('source').src) {
-            // Đảm bảo video bắt đầu từ đầu
             birthdayVideo.currentTime = 0;
 
-            // Xử lý Autoplay
             birthdayVideo.play().catch(error => {
-                console.warn("Autoplay bị chặn. Yêu cầu người dùng bấm Play.");
-                // Hiển thị thông báo nếu Autoplay bị chặn
-                const titleElement = document.getElementById('title');
-                titleElement.textContent = "Nhấn Play để xem món quà đầu tiên!";
+                console.warn("Autoplay bị chặn.");
 
-                // Thêm nút Play thủ công để người dùng tương tác
+                // Hiển thị thông báo nếu Autoplay bị chặn
+                title.textContent = "Nhấn Play để xem món quà đầu tiên!";
+
+                // Thêm nút Play thủ công
                 const manualPlayButton = document.createElement('button');
                 manualPlayButton.textContent = '▶️ Xem Video';
                 manualPlayButton.id = 'manualPlayButton';
-                manualPlayButton.className = 'mt-4 px-6 py-2 bg-red-500 text-white font-semibold rounded-lg hover:bg-red-600 transition duration-300';
                 manualPlayButton.onclick = () => {
                     birthdayVideo.play().then(() => {
                         manualPlayButton.remove();
-                        titleElement.textContent = "Chúc mừng sinh nhật em!";
+                        title.textContent = "Món Quà Đầu Tiên Dành Cho Em";
                     }).catch(e => console.error("Lỗi phát video:", e));
                 };
                 videoContainer.after(manualPlayButton);
